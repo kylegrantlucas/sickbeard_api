@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "http://github.com/kylegrantlucas/sickbeard_api"
   spec.license       = "MIT"
 
-  spec.add_runtime_depedency 'takeout'
+  spec.add_runtime_dependency 'takeout'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
