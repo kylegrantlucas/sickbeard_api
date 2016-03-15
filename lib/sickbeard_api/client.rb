@@ -5,10 +5,6 @@ require 'sickbeard_api/history'
 
 module SickbeardApi
   class Client
-    include SickbeardApi::Shows
-    include SickbeardApi::Episodes
-    include SickbeardApi::History
-    include SickbeardApi::Logs
     attr_accessor :client
     
 
@@ -18,11 +14,19 @@ module SickbeardApi
       self.client = Takeout::Client.new(uri: options[:uri], port: options[:port], schemas: schemas)
     end
 
-    def sickbeard
+    def setup_endpoints
+      sickbeard = self.client.get_root(cmd:'sb').body
+      
+      sickbeard.data.api_commands.each do |api_command|
+        parsed_method_name = api_command.split('.').join('_')
+        self.define_singleton_method(parsed_method_name) do |options={}|
+          self.client.get_root({cmd: api_command}.merge(options))
+        end
+      end
     end
-
-    def search_tvdb(name:nil,tvdbid:nil,lang:nil)
-      client.get_root(cmd: 'sb.searchtvdb', name: name, tvdbid: tvdbid, lang: lang)
+    
+    def list_methods
+      self.methods - Object.methods
     end
   end
 end
