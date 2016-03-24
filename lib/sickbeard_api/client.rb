@@ -14,11 +14,8 @@ module SickbeardApi
     end
 
     def setup_endpoints
-      sickbeard = self.client.get_root(cmd:'sb').body
-      
-      sickbeard["data"]["api_commands"].each do |api_command|
-        parsed_method_name = api_command.split('.').join('_')
-        self.define_singleton_method(parsed_method_name) do |options={}|
+      self.client.get_root(cmd:'sb').body["data"]["api_commands"].each do |api_command|
+        self.define_singleton_method(api_command.split('.').join('_')) do |options={}|
           self.client.get_root({cmd: api_command}.merge(options))
         end
       end
